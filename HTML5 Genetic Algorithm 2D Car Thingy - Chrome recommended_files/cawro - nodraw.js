@@ -3,10 +3,8 @@ var ghost;
 
 var timeStep = 1.0 / 60.0;
 
-var doDraw = false;
-var editMode = true;
+var doDraw = true;
 var cw_paused = false;
-var bluePrintComplete = false;
 
 var box2dfps = 60;
 var screenfps = 60;
@@ -28,25 +26,13 @@ var minimapfogdistance = 0;
 var minimarkerdistance = document.getElementById("minimapmarker").style;
 var fogdistance = document.getElementById("minimapfog").style;
 
-
-//////////my vars!!!!!!!!!!!!!
-var leaparray = new Array();
-var wheelPos = new Array();
-var leap_def = new Object();
-var multiFingerOn = false;
-var addWheelMode = false;
-
-
-
-var generationSize = 5;
+var generationSize = 3;
 var cw_carGeneration = new Array();
 var cw_carScores = new Array();
 var cw_topScores = new Array();
 var cw_graphTop = new Array();
 var cw_graphElite = new Array();
 var cw_graphAverage = new Array();
-
-
 
 var gen_champions = 1;
 var gen_parentality = 0.2;
@@ -135,11 +121,9 @@ var cw_Car = function() {
   this.__constructor.apply(this, arguments);
 }
 
-
 cw_Car.prototype.chassis = null;
 cw_Car.prototype.wheel1 = null;
 cw_Car.prototype.wheel2 = null;
-
 
 cw_Car.prototype.__constructor = function(car_def) {
   this.chassis = cw_createChassis(car_def.vertex_list);
@@ -207,19 +191,14 @@ function cw_createChassis(vertex_list) {
 
   var body = world.CreateBody(body_def);
 
-  for(var i=0; i< vertex_list.length; i++)
-  {
-    var j = i+1;
-    
-    if(j == vertex_list.length)
-    {
-     j = 0;
-       
-    }  
-    cw_createChassisPart(body, vertex_list[i],vertex_list[j]);
-  }
-
-
+  cw_createChassisPart(body, vertex_list[0],vertex_list[1]);
+  cw_createChassisPart(body, vertex_list[1],vertex_list[2]);
+  cw_createChassisPart(body, vertex_list[2],vertex_list[3]);
+  cw_createChassisPart(body, vertex_list[3],vertex_list[4]);
+  cw_createChassisPart(body, vertex_list[4],vertex_list[5]);
+  cw_createChassisPart(body, vertex_list[5],vertex_list[6]);
+  cw_createChassisPart(body, vertex_list[6],vertex_list[7]);
+  cw_createChassisPart(body, vertex_list[7],vertex_list[0]);
 
   body.vertex_list = vertex_list;
 
@@ -277,6 +256,110 @@ function cw_createRandomCar() {
 
 /* =replace all cw_createRandomCar()== w cw_createLeapCar */
 
+function cw_createLeapCar() {
+  var v2;
+  var car_def = new Object();
+  car_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
+  car_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
+  car_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
+  car_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
+
+
+
+
+//canvas:  lines of reference
+
+  var c=document.getElementById("mainbox");
+  var ctx=c.getContext("2d");
+  ctx.fillStyle="#FF3399";
+  ctx.beginPath();
+  ctx.arc(400,200,5,0,2*Math.PI);
+  ctx.moveTo(0,200);
+  ctx.lineTo(800,200);
+  ctx.moveTo(400,0);
+  ctx.lineTo(400,400);
+  ctx.stroke();
+
+
+  //HAY ALGO CON ESTO DE TOGGLE DISPLAY, MIRA COMO LO USA MAS ABAJO!
+  //toggleDisplay();
+
+//draw leap on canvas
+
+  var controller = new Leap.Controller({enableGestures: true});
+        var region = new Leap.UI.Region(
+          [-100, 100, -100], 
+          [100, 300, 100]
+        );
+
+        controller.addStep(new Leap.UI.Cursor())
+        controller.addStep(region.listener({nearThreshold:50}))
+
+
+        
+        controller.loop(function(frame, done) { 
+          if (frame.cursorPosition) {
+            leap_enabled = true;
+
+            var leapPosition = region.mapToXY(
+              frame.cursorPosition, 800, 400);
+
+            leapvars.leapX = leapPosition[0];
+            leapvars.leapY = leapPosition[1];
+            leapvars.leapZ = leapPosition[2];
+  
+
+            //ctx.beginPath();
+            ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
+
+
+          }
+
+
+
+
+          // if(frame.gestures && frame.gestures.length !== 0) {
+          //   var gesture = frame.gestures[0];
+
+          //   if(gesture.type === 'circle') {
+          //     leapvars.salv = true;
+
+          //     setTimeout(function() {
+          //           leapvars.salv = false;
+          //       }, 2000);
+
+          //   };
+
+        //}
+          done();
+        });
+
+        controller.connection.on('disconnect', function() {
+          leap_enabled = false;
+        });
+
+        alert("check it out!");
+  
+
+  car_def.vertex_list = new Array();
+  car_def.vertex_list.push(new b2Vec2(2,0));
+  car_def.vertex_list.push(new b2Vec2(2,2));
+  car_def.vertex_list.push(new b2Vec2(0,2));
+  car_def.vertex_list.push(new b2Vec2(-2,2));
+  car_def.vertex_list.push(new b2Vec2(-2,0));
+  car_def.vertex_list.push(new b2Vec2(-2,-2));
+  car_def.vertex_list.push(new b2Vec2(0,-2));
+  car_def.vertex_list.push(new b2Vec2(2,-2));
+
+  car_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
+  v2 = car_def.wheel_vertex1;
+  while(v2 == car_def.wheel_vertex1) {
+    v2 = Math.floor(Math.random()*8)%8
+  }
+  car_def.wheel_vertex2 = v2;
+
+  return car_def;
+}
 
 /* === END LEAP Car ============================================================= */
 
@@ -351,24 +434,10 @@ function cw_rotateFloorTile(coords, center, angle) {
 /* ==== Generation ========================================================= */
 
 function cw_generationZero() {
-  
-
-  //bluePrintComplete = false;
-  //leap_turnon();
-  //in toogleleapmode -> leap algo -> createLeapCar
-  //toggleLeapMode();
-  
-  //my car
-  cw_carGeneration.push(leap_def);
-
-
-  //the rest random cars   
-  for(var k = 1; k < generationSize; k++) {  
-    var car_def = cw_createRandomCar();
+  for(var k = 0; k < generationSize; k++) {
+    var car_def = cw_createLeapCar();
     cw_carGeneration.push(car_def);
   }
-
-  
   gen_counter = 0;
   document.getElementById("generation").innerHTML = "generation 0";
 }
@@ -408,12 +477,10 @@ function cw_nextGeneration() {
   cw_getChampions();
   cw_topScores.push({i:gen_counter,v:cw_carScores[0].v,x:cw_carScores[0].x,y:cw_carScores[0].y,y2:cw_carScores[0].y2});
   plot_graphs();
-  newGeneration.push(cw_carGeneration[0]);
-  for(var k = 0; k < gen_champions; k++) {
-    if(cw_carScores[k].i !==0)
-      {
-        newGeneration.push(cw_carGeneration[cw_carScores[k].i]);
-      }
+
+  newGeneration.push(cw_carGeneration[0];
+  for(var k = 1; k < gen_champions; k++) {
+    newGeneration.push(cw_carGeneration[cw_carScores[k].i]);
   }
   for(k = gen_champions; k < generationSize; k++) {
     var parent1 = cw_getParents();
@@ -434,7 +501,6 @@ function cw_nextGeneration() {
 
 function cw_getChampions() {
   var ret = new Array();
-  //ret.push(0);
   cw_carScores.sort(function(a,b) {if(a.v > b.v) {return -1} else {return 1}});
   for(var k = 0; k < generationSize; k++) {
     ret.push(cw_carScores[k].i);
@@ -959,9 +1025,6 @@ function cw_toggleGhostReplay(button) {
 }
 // ghost replay stuff END
 
-
-function startThisShit()
-{
 var oldrandom = Math.seedrandom();
 cw_createFloor();
 
@@ -969,373 +1032,3 @@ cw_resetPopulation();
 
 cw_runningInterval = setInterval(simulationStep, Math.round(1000/box2dfps));
 cw_drawInterval = setInterval(cw_drawScreen, Math.round(1000/screenfps));
-}
-
-//--------------------------------------------------
-//----------Draw create mode
-
-
-//-------------IT ALL STARTS HERE!!!!!!!!!!!!!!!!!!!!!!
-toggleLeapMode();
-
-function toggleLeapMode()
-{
-
-    leap_turnon();
-  
-    leap_drawInterval = setInterval(leap_drawScreen, Math.round(1000/screenfps));
-    leap_runningInterval = setInterval(leap_simulationStep, Math.round(1000/box2dfps));
- 
-}
-
-
-function leap_drawScreen()
-{
-
-  var c=document.getElementById("mainbox");
-  var ctx=c.getContext("2d");
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="#FF3399";
-  ctx.beginPath();
-  ctx.arc(400,200,5,0,2*Math.PI);
-  ctx.moveTo(0,200);
-  ctx.lineTo(800,200);
-  ctx.moveTo(400,0);
-  ctx.lineTo(400,400);
-  ctx.stroke();
-  ctx.closePath();
-}
-
-
-
-function leap_simulationStep()
-{
-
-  var c=document.getElementById("mainbox");
-  var ctx=c.getContext("2d");
- //log coords!!!!  
-  //console.log("x: " + leapvars.leapX + " y: " + leapvars.leapY + " z: " + leapvars.leapZ);
-
-  if (addWheelMode == false)
-  {
-    if (multiFingerOn)
-    {
-      //alert ("multi finger mode on");
-    }
-    else
-    {
-      if(leapvars.leapZ < 0.5)
-      { 
-        ctx.beginPath();
-        ctx.fillStyle='red';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
-        ctx.closePath();
-        ctx.fill();
-        //rec pos
-        //first pos
-        if(leaparray.length == 0)
-        {
-          leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
-        }
-        else
-        {
-          if( tooClose(leapvars.leapX, leapvars.leapY, leaparray[leaparray.length-1].x, leaparray[leaparray.length-1].y)== false)
-          {
-            leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
-          }    
-        }
-      
-      }
-      else  //leapZ > 0.5   i.e. FAR
-      {
-        ctx.beginPath();
-        ctx.fillStyle='FFEDA9';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
-        ctx.fill();
-        ctx.closePath();
-        
-      }
-
-      //draw array so far
-      ctx.beginPath();
-      ctx.fillStyle='CC3300';
-      for(var i = 0; i < leaparray.length; i++)
-      {   
-        ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
-      }
-      ctx.fill();
-      ctx.closePath();
-
-    } //single finger mode close
-  }  
-  else  //wheelmode on
-  {
-
-    //draw array
-    ctx.beginPath();
-    ctx.fillStyle='000066';
-    for(var i = 0; i < leaparray.length; i++)
-    {
-      ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
-    }
-    ctx.fill();
-    ctx.closePath();
-
-
-
-    //lines for array
-    ctx.beginPath();
-    ctx.strokeStyle='6699FF';
-    ctx.moveTo(leaparray[0].x, leaparray[0].y);
-    for(var i = 1; i < leaparray.length; i++)
-    {
-      ctx.lineTo(leaparray[i].x, leaparray[i].y)
-    }
-    ctx.lineTo(leaparray[0].x, leaparray[0].y);
-    ctx.stroke();
-    //ctx.fill();
-    ctx.closePath();
-
-
-    if(leapvars.leapZ < 0.5)
-    { 
-        ctx.beginPath();
-        ctx.fillStyle='#00CCFF';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
-        ctx.fill();
-        ctx.closePath();
-        
-        //get closest vertex
-        var shortest = getDist(leaparray[0].x, leaparray[0].y, leapvars.leapX, leapvars.leapY)
-        var ishortest = 0;
-        for(var i = 1; i < leaparray.length; i++)
-        {
-          var ndist = getDist(leaparray[i].x, leaparray[i].y, leapvars.leapX, leapvars.leapY);
-          if( ndist < shortest)
-          {
-            shortest = ndist;
-            ishortest = i;
-          }
-        }
-
-        if(shortest<75)
-        {
-          if(wheelPos.length<2)
-            {
-              wheelPos.push(ishortest);
-            }
-          else if(i !== wheelPos[0] && i !== wheelPos[1])
-          {
-            wheelPos.shift();
-            wheelPos.push(ishortest);
-          }
-          //alert("closest: " + ishortest + " at: " + shortest + " wheelpos length " + wheelPos.length);
-        }       
-     } 
-     else  //leapZ > 0.5   FAR
-     {
-        ctx.beginPath();
-        ctx.fillStyle='#0000CC';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
-        ctx.fill();
-        ctx.closePath();
-        
-     }        
-
-     //show wheelPos
-    ctx.beginPath();
-    ctx.fillStyle='006666';
-    for(var i=0; i < wheelPos.length;i++)
-    {
-      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,15,0,2*Math.PI);  
-    }
-    ctx.fill();
-    ctx.closePath();
-
-  }
-
-
-
-}
-
-
-function tooClose(x1,y1,x2,y2)
-{
-  if(Math.abs(x1-x2)<20 && Math.abs(y1-y2)<20)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-
-function getDist(x1,y1,x2,y2)
-{
-  var dx = Math.abs(x1-x2);
-  var dy = Math.abs(y1-y2);
-  return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
-}
-
-
-
-function cw_createLeapCar()//param array of coordinates and wheelpos
- {
-  var v2;
-
-  if (leaparray.length == 0)
-  {
-    leap_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
-    leap_def.vertex_list.push(new b2Vec2(2,0));
-    leap_def.vertex_list.push(new b2Vec2(2,2));
-    leap_def.vertex_list.push(new b2Vec2(0,2));
-    leap_def.vertex_list.push(new b2Vec2(-2,2));
-    leap_def.vertex_list.push(new b2Vec2(-2,0));
-    leap_def.vertex_list.push(new b2Vec2(-2,-2));
-    leap_def.vertex_list.push(new b2Vec2(0,-2));
-    leap_def.vertex_list.push(new b2Vec2(2,-2));
-
-    leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
-    v2 = leap_def.wheel_vertex1;
-    while(v2 == leap_def.wheel_vertex1) {
-      v2 = Math.floor(Math.random()*8)%8
-    }
-    leap_def.wheel_vertex2 = v2;
-  }
-  else
-  {
-    leap_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
-
-    //>>>>>>>>POSTA:  for variable vertex ammount
-    // for(var i = 0; i < leaparray.length; i++)
-    // {
-    //   var trueX = (leaparray[i].x-400)/200;
-    //   var trueY = (200-leaparray[i].y)/100;
-    //   leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
-    // }
-
-
-
-    //workarround
-
-    for(var i = 0; i < 8; i++)
-    {
-      var trueX = (leaparray[i].x-400)/200;
-      var trueY = (200-leaparray[i].y)/100;
-      leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
-      //alert("x: " + trueX + " y: " + trueY);
-    }  
-
-
-    //if no wheels
-    if(wheelPos.length <2)
-    {
-      leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
-      v2 = leap_def.wheel_vertex1;
-      while(v2 == leap_def.wheel_vertex1) 
-      {
-        v2 = Math.floor(Math.random()*8)%8
-      }
-      leap_def.wheel_vertex2 = v2;
-    }
-    else
-    {
-      leap_def.wheel_vertex1 = wheelPos[0];
-      leap_def.wheel_vertex1 = wheelPos[1];
-    }
-    //if wheels use wheelPos
-
-  }   
-  
-}
-
-
-function leap_turnon()
-{
-
-    var controller = new Leap.Controller({enableGestures: true});
-        var region = new Leap.UI.Region(
-          [0, 150, -100], 
-          [200, 250, 100]
-        );
-
-        controller.addStep(new Leap.UI.Cursor())
-        controller.addStep(region.listener({nearThreshold:50}))
-        
-        controller.loop(function(frame, done) { 
-          if (frame.cursorPosition) {
-            leap_enabled = true;
-
-            var leapPosition = region.mapToXY(frame.cursorPosition, canvas.width, canvas.height);
-
-            leapvars.leapX = leapPosition[0];
-            leapvars.leapY = leapPosition[1];
-            leapvars.leapZ = leapPosition[2];
-
-          }
-
-          done();
-        });
-
-        controller.connection.on('disconnect', function() {
-        leap_enabled = false;
-        });
-
-}
-
-
-
-//stops checking for updates and all that shit
-function leap_end()
-{
-  
-   clearInterval(leap_drawInterval);
-   clearInterval(leap_runningInterval);
-   cw_paused = false;
-
-
-   old_last_drawn_tile = 1;
-   cw_resumeSimulation();
-
-}
-
-function submitBluePrint()
-{
-  //>>>>>remove editing buttons
-
-  cw_createLeapCar();
-  leap_end();
-  startThisShit();
-
-}
-
-function toggleMultiFingerOn()
-{
-  multiFingerOn = !multiFingerOn;
-}
-
-function resetDots()
-{
-  leaparray.length = 0;
-  wheelPos.length = 0;
-  addWheelMode = false;
-}
-
-function addWheels()
-{
-  addWheelMode = !addWheelMode;
-
-  //>>>>>>>change button to "shape?"
-  //>>>>>>make submit blueprint only visible as from now!
-
-}
