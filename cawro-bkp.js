@@ -1,4 +1,7 @@
 // Global Vars
+toggleLeapMode();
+
+
 var ghost;
 
 var timeStep = 1.0 / 60.0;
@@ -296,7 +299,7 @@ function cw_createFloor() {
   minimapctx.beginPath();
   minimapctx.moveTo(0,35 * minimapscale);
   for(var k = 0; k < maxFloorTiles; k++) {
-    last_tile = cw_createFloorTile(tile_position, (Math.random()*3 - 1.5) * 1.5*k/maxFloorTiles);
+    last_tile = cw_createFloorTile(tile_position, (Math.random()*2.7 - 1.5) * 1.5*k/maxFloorTiles);
     cw_floorTiles.push(last_tile);
     last_fixture = last_tile.GetFixtureList();
     last_world_coords = last_tile.GetWorldPoint(last_fixture.GetShape().m_vertices[3]);
@@ -976,7 +979,7 @@ cw_drawInterval = setInterval(cw_drawScreen, Math.round(1000/screenfps));
 
 
 //-------------IT ALL STARTS HERE!!!!!!!!!!!!!!!!!!!!!!
-toggleLeapMode();
+
 
 function toggleLeapMode()
 {
@@ -1089,7 +1092,7 @@ function leap_simulationStep()
     ctx.moveTo(leaparray[0].x, leaparray[0].y);
     for(var i = 1; i < leaparray.length; i++)
     {
-      ctx.lineTo(leaparray[i].x, leaparray[i].y)
+      ctx.lineTo(leaparray[i].x, leaparray[i].y);
     }
     ctx.lineTo(leaparray[0].x, leaparray[0].y);
     ctx.stroke();
@@ -1118,16 +1121,23 @@ function leap_simulationStep()
           }
         }
 
-        if(shortest<75)
+        if(shortest<40)
         {
-          if(wheelPos.length<2)
+          if(wheelPos.length == 0)
             {
               wheelPos.push(ishortest);
+              console.log("1st wheelpos added " + wheelPos[0]);
             }
-          else if(i !== wheelPos[0] && i !== wheelPos[1])
+          else if (wheelPos.length == 1 && ishortest !== wheelPos[0])
+            {
+              wheelPos.push(ishortest);
+              console.log("2nd wheelpos added " + wheelPos[1]);
+            }
+          else if(ishortest !== wheelPos[0] && ishortest !== wheelPos[1])
           {
             wheelPos.shift();
             wheelPos.push(ishortest);
+            console.log("wheelpos has " + wheelPos[0] + " and " + wheelPos[1]);
           }
           //alert("closest: " + ishortest + " at: " + shortest + " wheelpos length " + wheelPos.length);
         }       
@@ -1183,7 +1193,7 @@ function getDist(x1,y1,x2,y2)
 
 function cw_createLeapCar()//param array of coordinates and wheelpos
  {
-  var v2;
+  
 
   if (leaparray.length == 0)
   {
@@ -1201,6 +1211,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.vertex_list.push(new b2Vec2(0,-2));
     leap_def.vertex_list.push(new b2Vec2(2,-2));
 
+    var v2;
     leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
     v2 = leap_def.wheel_vertex1;
     while(v2 == leap_def.wheel_vertex1) {
@@ -1216,21 +1227,11 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.vertex_list = new Array();
 
-    //>>>>>>>>POSTA:  for variable vertex ammount
-    // for(var i = 0; i < leaparray.length; i++)
-    // {
-    //   var trueX = (leaparray[i].x-400)/200;
-    //   var trueY = (200-leaparray[i].y)/100;
-    //   leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
-    // }
 
 
-
-    //workarround
-
-    for(var i = 0; i < 8; i++)
+    for(var i = 0; i < leaparray.length; i++)
     {
-      var trueX = (leaparray[i].x-400)/200;
+      var trueX = (leaparray[i].x-400)/100;
       var trueY = (200-leaparray[i].y)/100;
       leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
       //alert("x: " + trueX + " y: " + trueY);
@@ -1240,6 +1241,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     //if no wheels
     if(wheelPos.length <2)
     {
+      var v2;
       leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
       v2 = leap_def.wheel_vertex1;
       while(v2 == leap_def.wheel_vertex1) 
@@ -1251,7 +1253,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     else
     {
       leap_def.wheel_vertex1 = wheelPos[0];
-      leap_def.wheel_vertex1 = wheelPos[1];
+      leap_def.wheel_vertex2 = wheelPos[1];
     }
     //if wheels use wheelPos
 
@@ -1262,6 +1264,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
 function leap_turnon()
 {
+
 
     var controller = new Leap.Controller({enableGestures: true});
         var region = new Leap.UI.Region(
@@ -1312,6 +1315,7 @@ function leap_end()
 function submitBluePrint()
 {
   //>>>>>remove editing buttons
+  console.log("number of wheels:" + wheelPos.length);
 
   cw_createLeapCar();
   leap_end();

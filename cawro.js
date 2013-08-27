@@ -1,4 +1,7 @@
 // Global Vars
+toggleLeapMode();
+
+
 var ghost;
 
 var timeStep = 1.0 / 60.0;
@@ -48,7 +51,7 @@ var cw_graphAverage = new Array();
 
 
 
-var gen_champions = 1;
+var gen_champions = 2;
 var gen_parentality = 0.2;
 var gen_mutation = 0.05;
 var gen_counter = 0;
@@ -437,7 +440,10 @@ function cw_getChampions() {
   //ret.push(0);
   cw_carScores.sort(function(a,b) {if(a.v > b.v) {return -1} else {return 1}});
   for(var k = 0; k < generationSize; k++) {
-    ret.push(cw_carScores[k].i);
+    if(cw_carScores[k].i!==0)
+    {
+      ret.push(cw_carScores[k].i);
+    }
   }
   return ret;
 }
@@ -976,7 +982,7 @@ cw_drawInterval = setInterval(cw_drawScreen, Math.round(1000/screenfps));
 
 
 //-------------IT ALL STARTS HERE!!!!!!!!!!!!!!!!!!!!!!
-toggleLeapMode();
+
 
 function toggleLeapMode()
 {
@@ -1028,7 +1034,7 @@ function leap_simulationStep()
       { 
         ctx.beginPath();
         ctx.fillStyle='red';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         //rec pos
@@ -1050,7 +1056,7 @@ function leap_simulationStep()
       {
         ctx.beginPath();
         ctx.fillStyle='FFEDA9';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1061,7 +1067,7 @@ function leap_simulationStep()
       ctx.fillStyle='CC3300';
       for(var i = 0; i < leaparray.length; i++)
       {   
-        ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
+        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
       }
       ctx.fill();
       ctx.closePath();
@@ -1076,7 +1082,7 @@ function leap_simulationStep()
     ctx.fillStyle='000066';
     for(var i = 0; i < leaparray.length; i++)
     {
-      ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
+      ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
     }
     ctx.fill();
     ctx.closePath();
@@ -1089,7 +1095,7 @@ function leap_simulationStep()
     ctx.moveTo(leaparray[0].x, leaparray[0].y);
     for(var i = 1; i < leaparray.length; i++)
     {
-      ctx.lineTo(leaparray[i].x, leaparray[i].y)
+      ctx.lineTo(leaparray[i].x, leaparray[i].y);
     }
     ctx.lineTo(leaparray[0].x, leaparray[0].y);
     ctx.stroke();
@@ -1101,7 +1107,7 @@ function leap_simulationStep()
     { 
         ctx.beginPath();
         ctx.fillStyle='#00CCFF';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1118,16 +1124,23 @@ function leap_simulationStep()
           }
         }
 
-        if(shortest<75)
+        if(shortest<40)
         {
-          if(wheelPos.length<2)
+          if(wheelPos.length == 0)
             {
               wheelPos.push(ishortest);
+              console.log("1st wheelpos added " + wheelPos[0]);
             }
-          else if(i !== wheelPos[0] && i !== wheelPos[1])
+          else if (wheelPos.length == 1 && ishortest !== wheelPos[0])
+            {
+              wheelPos.push(ishortest);
+              console.log("2nd wheelpos added " + wheelPos[1]);
+            }
+          else if(ishortest !== wheelPos[0] && ishortest !== wheelPos[1])
           {
             wheelPos.shift();
             wheelPos.push(ishortest);
+            console.log("wheelpos has " + wheelPos[0] + " and " + wheelPos[1]);
           }
           //alert("closest: " + ishortest + " at: " + shortest + " wheelpos length " + wheelPos.length);
         }       
@@ -1136,7 +1149,7 @@ function leap_simulationStep()
      {
         ctx.beginPath();
         ctx.fillStyle='#0000CC';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1147,7 +1160,7 @@ function leap_simulationStep()
     ctx.fillStyle='006666';
     for(var i=0; i < wheelPos.length;i++)
     {
-      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,15,0,2*Math.PI);  
+      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,20,0,2*Math.PI);  
     }
     ctx.fill();
     ctx.closePath();
@@ -1183,7 +1196,7 @@ function getDist(x1,y1,x2,y2)
 
 function cw_createLeapCar()//param array of coordinates and wheelpos
  {
-  var v2;
+  
 
   if (leaparray.length == 0)
   {
@@ -1201,6 +1214,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.vertex_list.push(new b2Vec2(0,-2));
     leap_def.vertex_list.push(new b2Vec2(2,-2));
 
+    var v2;
     leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
     v2 = leap_def.wheel_vertex1;
     while(v2 == leap_def.wheel_vertex1) {
@@ -1216,21 +1230,11 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.vertex_list = new Array();
 
-    //>>>>>>>>POSTA:  for variable vertex ammount
-    // for(var i = 0; i < leaparray.length; i++)
-    // {
-    //   var trueX = (leaparray[i].x-400)/200;
-    //   var trueY = (200-leaparray[i].y)/100;
-    //   leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
-    // }
 
 
-
-    //workarround
-
-    for(var i = 0; i < 8; i++)
+    for(var i = 0; i < leaparray.length; i++)
     {
-      var trueX = (leaparray[i].x-400)/200;
+      var trueX = (leaparray[i].x-400)/100;
       var trueY = (200-leaparray[i].y)/100;
       leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
       //alert("x: " + trueX + " y: " + trueY);
@@ -1240,6 +1244,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     //if no wheels
     if(wheelPos.length <2)
     {
+      var v2;
       leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
       v2 = leap_def.wheel_vertex1;
       while(v2 == leap_def.wheel_vertex1) 
@@ -1251,7 +1256,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     else
     {
       leap_def.wheel_vertex1 = wheelPos[0];
-      leap_def.wheel_vertex1 = wheelPos[1];
+      leap_def.wheel_vertex2 = wheelPos[1];
     }
     //if wheels use wheelPos
 
@@ -1262,6 +1267,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
 function leap_turnon()
 {
+
 
     var controller = new Leap.Controller({enableGestures: true});
         var region = new Leap.UI.Region(
@@ -1312,6 +1318,7 @@ function leap_end()
 function submitBluePrint()
 {
   //>>>>>remove editing buttons
+  console.log("number of wheels:" + wheelPos.length);
 
   cw_createLeapCar();
   leap_end();
@@ -1331,11 +1338,18 @@ function resetDots()
   addWheelMode = false;
 }
 
-function addWheels()
+function addWheels(button)
 {
   addWheelMode = !addWheelMode;
 
-  //>>>>>>>change button to "shape?"
-  //>>>>>>make submit blueprint only visible as from now!
+  // if(addWheelMode == true)
+  // {
+  //   button.value = "Draw shape";
+  // }
+  // else
+  // {
+  //   button.value = "Add Wheels";
+  // }
 
+  //>>>>>>make submit blueprint only visible as from now!
 }
