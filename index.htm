@@ -138,53 +138,40 @@
           <option value="1.0">100%</option>
         </select>
       </div>
-      <div>
-        Elite clones:
-        <select id="elitesize" onchange="cw_setEliteSize(this.options[this.selectedIndex].value)">
-          <option value="0">0</option>
-          <option value="1" selected="selected">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-        </select>
-      </div>
+
       <div id="generation">generation 4</div>
       <div id="distancemeter">distance: 55.08 meters<br>height: 0.26 meters</div>
       <div id="health">Health: 600</div>
       <div id="cars">Car #1: 106.52m +  5.07 m/s = 111.59pts<br>Car #2: 108.12m +  6.16 m/s = 114.28pts<br>Car #3: 133.39m +  4.75 m/s = 138.14pts<br>Car #4: </div>
     </div>
     <div id="explanation">
-      <h3>Controls</h3>
-      Suprise: Toggles drawing, makes the simulation faster.<br>
-      New Population: Keeps the generated track and restarts the whole car population.<br>
+      <h3>Explanation</h3>
+      This is a modification of <a href="http://rednuht.org/genetic_cars_2/"> this </a> original page by <a href="http://rednuht.org/"> this guy </a> (thanks!!) ...which is in turn based on <a href="http://boxcar2d.com/">BoxCar2D</a>.<br>
+      "Cars" are randomly generated and put to compete against each other. Imitating what occurs in nature, the best car's characteristics will be passed on to the next "generation" while other aspects will be randomly mutated and so, over time, they will be better adapted to the environment.<br>
+      What I added is the possibility of using a leap motion sensor to draw your own car which will compete against the randomly generated ones. Your car won't mutate like the others, it will stay the same over the generations while the others evolve. <br>
+      The whole idea of this project is to prove the value of Iterative Random Design in a pretty graspable way... although you may at first think that it is useless and that you can do better with a little common sense, with Intelligent Design, your car will eventually be crushed by the blind random creations of the computer if you give it a little time.<br>
+
+
+      <h3>Instructions</h3>
+      Using one finger over a Leap Motion sensor, draw the initial shape of your car. Keep in mind that all dots will be linked to the center (0,0) position. There is an imaginary touch-screen in the air above your leap sensor... you draw by pushing forward against it.<br>
+      When you're happy with the shape, you can either choose on what vertexes to put wheels by clicking on "add wheels" or you can leave the wheel positions to chance by directly clicking "Submit BluePrint"<br>
+      In the wheel mode, drawing works in a similar way by pushing against an imaginary touch screen. Point near one of the axis of your car to place a wheel on that spot. You can only place up to two wheels right now. The wheel size and density will be random.<br>
+      That's it! Click on "Submit BluePrint" to create your car and see how it fails against random creations!<br>
+
+      <h4>Optional controls:</h4>
       Create new world with seed: The same seed always creates the same track, so you can agree on a seed with your friends and compete. :)<br>
       Mutation rate: The chance that each gene in each individual will mutate to a random value when a new generation is born.<br>
-      Elite clones: The top n cars that will be copied over to the next generation.<br>
-      View top replay: Pause the current simulation and show the top performing car. Click a second time to resume simulation.
       <h3>Graph</h3>
       Red: Top score in each generation.<br>
       Green: Average of the top 10 cars in each generation.<br>
       Blue: Average of the entire generation.
-      <h3>But what is it?</h3>
-      The program uses a simple genetic algorithm to evolve random two-wheeled shapes into cars over generations. Loosely based on <a href="http://boxcar2d.com/">BoxCar2D</a>, but
-      written from scratch, only using the same physics engine (<a href="http://box2d.org/">box2d</a>).<br>
-      seedrandom.js written by <a href="http://davidbau.com/">David Bau</a>. (thanks!)
       <h3>Genome</h3>
       The genome consists of:<br>
       - Shape: (8 genes, 1 per vertex)<br>
       - Wheel size: (2 genes, 1 per wheel)<br>
       - Wheel position: (2 genes, 1 per wheel)<br>
       - Wheel density: (2 genes, 1 per wheel) darker wheels mean denser wheels
-      <h3>Blurb</h3>
-      This is not as deterministic as it should be, so your best car may not perform as well as it once did. The terrain gets more complex with distance.<br>
-      I'm not in the mood to deal with checking if all scripts have loaded before running, so refresh the page if things seem whack.<br>
-      <a href="mailto:rednuht@rednuht.org">Send me food</a>.
+     
     </div>
   
     <script src="seedrandom.js"></script>

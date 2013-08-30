@@ -51,7 +51,7 @@ var cw_graphAverage = new Array();
 
 
 
-var gen_champions = 1;
+var gen_champions = 2;
 var gen_parentality = 0.2;
 var gen_mutation = 0.05;
 var gen_counter = 0;
@@ -299,7 +299,7 @@ function cw_createFloor() {
   minimapctx.beginPath();
   minimapctx.moveTo(0,35 * minimapscale);
   for(var k = 0; k < maxFloorTiles; k++) {
-    last_tile = cw_createFloorTile(tile_position, (Math.random()*2.7 - 1.5) * 1.5*k/maxFloorTiles);
+    last_tile = cw_createFloorTile(tile_position, (Math.random()*3 - 1.5) * 1.5*k/maxFloorTiles);
     cw_floorTiles.push(last_tile);
     last_fixture = last_tile.GetFixtureList();
     last_world_coords = last_tile.GetWorldPoint(last_fixture.GetShape().m_vertices[3]);
@@ -440,7 +440,10 @@ function cw_getChampions() {
   //ret.push(0);
   cw_carScores.sort(function(a,b) {if(a.v > b.v) {return -1} else {return 1}});
   for(var k = 0; k < generationSize; k++) {
-    ret.push(cw_carScores[k].i);
+    if(cw_carScores[k].i!==0)
+    {
+      ret.push(cw_carScores[k].i);
+    }
   }
   return ret;
 }
@@ -1031,7 +1034,7 @@ function leap_simulationStep()
       { 
         ctx.beginPath();
         ctx.fillStyle='red';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         //rec pos
@@ -1053,7 +1056,7 @@ function leap_simulationStep()
       {
         ctx.beginPath();
         ctx.fillStyle='FFEDA9';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1064,7 +1067,7 @@ function leap_simulationStep()
       ctx.fillStyle='CC3300';
       for(var i = 0; i < leaparray.length; i++)
       {   
-        ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
+        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
       }
       ctx.fill();
       ctx.closePath();
@@ -1079,7 +1082,7 @@ function leap_simulationStep()
     ctx.fillStyle='000066';
     for(var i = 0; i < leaparray.length; i++)
     {
-      ctx.arc(leaparray[i].x,leaparray[i].y,5,0,2*Math.PI);
+      ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
     }
     ctx.fill();
     ctx.closePath();
@@ -1104,7 +1107,7 @@ function leap_simulationStep()
     { 
         ctx.beginPath();
         ctx.fillStyle='#00CCFF';
-        ctx.arc(leapvars.leapX,leapvars.leapY,10,0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1146,7 +1149,7 @@ function leap_simulationStep()
      {
         ctx.beginPath();
         ctx.fillStyle='#0000CC';
-        ctx.arc(leapvars.leapX,leapvars.leapY,20*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1157,7 +1160,7 @@ function leap_simulationStep()
     ctx.fillStyle='006666';
     for(var i=0; i < wheelPos.length;i++)
     {
-      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,15,0,2*Math.PI);  
+      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,20,0,2*Math.PI);  
     }
     ctx.fill();
     ctx.closePath();
@@ -1335,11 +1338,18 @@ function resetDots()
   addWheelMode = false;
 }
 
-function addWheels()
+function addWheels(button)
 {
   addWheelMode = !addWheelMode;
 
-  //>>>>>>>change button to "shape?"
-  //>>>>>>make submit blueprint only visible as from now!
+  // if(addWheelMode == true)
+  // {
+  //   button.value = "Draw shape";
+  // }
+  // else
+  // {
+  //   button.value = "Add Wheels";
+  // }
 
+  //>>>>>>make submit blueprint only visible as from now!
 }
