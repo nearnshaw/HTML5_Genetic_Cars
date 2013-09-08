@@ -34,6 +34,7 @@ var fogdistance = document.getElementById("minimapfog").style;
 
 //////////my vars!!!!!!!!!!!!!
 var leaparray = new Array();
+var leapangles = new Array();
 var wheelPos = new Array();
 var leap_def = new Object();
 var multiFingerOn = false;
@@ -271,6 +272,16 @@ function cw_createRandomCar() {
     v2 = Math.floor(Math.random()*8)%8
   }
   car_def.wheel_vertex2 = v2;
+
+
+  //log all vertexes    carajo
+  for (i=0; i<car_def.vertex_list.length; i++)
+  {
+    console.log("random car vertex_list[" + i +"] : " + car_def.vertex_list[i].x + " and " +  car_def.vertex_list[i].y  );  
+  }
+
+
+
 
   return car_def;
 }
@@ -1042,12 +1053,20 @@ function leap_simulationStep()
         if(leaparray.length == 0)
         {
           leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
+          leapangles.push(getAngle(leapvars.leapX, leapvars.leapY));
+
+          console.log("X is:" + leapvars.leapX + " Y is: "+ leapvars.leapY + " and angle is: " + leapangles[leapangles.length-1]);
         }
         else
         {
           if( tooClose(leapvars.leapX, leapvars.leapY, leaparray[leaparray.length-1].x, leaparray[leaparray.length-1].y)== false)
           {
             leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
+            leapangles.push(getAngle(leapvars.leapX, leapvars.leapY));
+            console.log("X is:" + leapvars.leapX + " Y is: "+ leapvars.leapY + " and angle is: " + leapangles[leapangles.length-1]);
+            
+
+
           }    
         }
       
@@ -1192,11 +1211,39 @@ function getDist(x1,y1,x2,y2)
   return Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
 }
 
+function getAngle(x,y)
+{
+  x = x-400;
+  y= (200-y);
+  if(x>0 && y>0)
+  {
+    var deg = Math.atan(x/y)*(180/Math.PI);
+    //console.log("angle is "+deg);
+    return deg   //arc tan sohcahtoa  RADIANS  
+  }
+  else if (x>0 && y<0)
+  { 
+    var deg = Math.atan(y/x) * (180/Math.PI);
+    return (deg*-1)+90;   //arc tan sohcahtoa  RADIANS  
+  }
+  else if (x<0 && y<0)
+  { 
+    var deg = Math.atan(x/y) * (180/Math.PI);
+    return deg+180;   //arc tan sohcahtoa  RADIANS  
+  }
+   else if (x<0 && y>0)
+  { 
+    var deg = Math.atan(y/x) * (180/Math.PI);
+    return (deg*-1)+270;   //arc tan sohcahtoa  RADIANS  
+  }
+}
+
 
 
 function cw_createLeapCar()//param array of coordinates and wheelpos
  {
   
+  leap_def.vertex_list = new Array();
 
   if (leaparray.length == 0)
   {
@@ -1204,7 +1251,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
     leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
+  
     leap_def.vertex_list.push(new b2Vec2(2,0));
     leap_def.vertex_list.push(new b2Vec2(2,2));
     leap_def.vertex_list.push(new b2Vec2(0,2));
@@ -1224,18 +1271,29 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
   }
   else
   {
+
+    
+
+
+
     leap_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
     leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
     leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
-
+  
 
 
     for(var i = 0; i < leaparray.length; i++)
     {
       var trueX = (leaparray[i].x-400)/100;
+      
       var trueY = (200-leaparray[i].y)/100;
+      
+      // var trueX = Math.round((leaparray[i].x-400)*100)/10000;
+      
+      // var trueY = Math.round((200-leaparray[i].y)*100)/10000;
+
+
       leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
       //alert("x: " + trueX + " y: " + trueY);
     }  
@@ -1262,6 +1320,14 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
   }   
   
+
+  //log vertexes in all cases
+  for (i=0; i<leap_def.vertex_list.length; i++)
+  {
+    console.log("vertex_list[" + i +"] : " + leap_def.vertex_list[i].x + " and " +  leap_def.vertex_list[i].y  );  
+  }
+  console.log("wheel vertexes : " + leap_def.wheel_vertex1 + " and " + leap_def.wheel_vertex2);
+
 }
 
 
@@ -1320,6 +1386,27 @@ function submitBluePrint()
   //>>>>>remove editing buttons
   console.log("number of wheels:" + wheelPos.length);
 
+  if(!addWheelMode)
+  {
+      //order leaparray by getAngle(x,y)
+      for (var i = 0; i< leapangles.length; i++)
+      {
+        for (var j = i+1; j< leapangles.length; j++)
+        {
+          if(leapangles[i]<leapangles[j])
+          {
+            var banca = leapangles[i];
+            leapangles[i] = leapangles[j];
+            leapangles[j] = banca;
+
+            banca = leaparray[i];
+            leaparray[i] = leaparray[j];
+            leaparray[j] = banca;
+          }
+        } 
+      }
+  }
+
   cw_createLeapCar();
   leap_end();
   startThisShit();
@@ -1342,6 +1429,25 @@ function addWheels(button)
 {
   addWheelMode = !addWheelMode;
 
+
+//order leaparray by getAngle(x,y)
+  for (var i = 0; i< leapangles.length; i++)
+  {
+    for (var j = i+1; j< leapangles.length; j++)
+    {
+      if(leapangles[i]<leapangles[j])
+      {
+        var banca = leapangles[i];
+        leapangles[i] = leapangles[j];
+        leapangles[j] = banca;
+
+        banca = leaparray[i];
+        leaparray[i] = leaparray[j];
+        leaparray[j] = banca;
+      }
+    }
+    
+  }
   // if(addWheelMode == true)
   // {
   //   button.value = "Draw shape";

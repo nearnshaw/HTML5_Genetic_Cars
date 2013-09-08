@@ -38,6 +38,7 @@ var leapangles = new Array();
 var wheelPos = new Array();
 var leap_def = new Object();
 var multiFingerOn = false;
+var manyFingers = false;
 var addWheelMode = false;
 
 
@@ -101,12 +102,13 @@ var distanceMeter = document.getElementById("distancemeter");
 
 //leapstuff
 
-   var leapvars =
-   {
+   var leapvars = new Array();
+   leapvars.push({
     leapX: 400,
     leapY: 200,
-    leapZ: 200,
-   };
+    leapZ: 1,
+   });
+   
 
 
 
@@ -272,6 +274,16 @@ function cw_createRandomCar() {
     v2 = Math.floor(Math.random()*8)%8
   }
   car_def.wheel_vertex2 = v2;
+
+
+  //log all vertexes    carajo
+  for (i=0; i<car_def.vertex_list.length; i++)
+  {
+    console.log("random car vertex_list[" + i +"] : " + car_def.vertex_list[i].x + " and " +  car_def.vertex_list[i].y  );  
+  }
+
+
+
 
   return car_def;
 }
@@ -1001,7 +1013,9 @@ function leap_drawScreen()
 
   var c=document.getElementById("mainbox");
   var ctx=c.getContext("2d");
+  ctx.fillStyle="#FFFFFF";
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
   ctx.fillStyle="#FF3399";
   ctx.beginPath();
   ctx.arc(400,200,5,0,2*Math.PI);
@@ -1025,35 +1039,31 @@ function leap_simulationStep()
 
   if (addWheelMode == false)
   {
-    if (multiFingerOn)
+    if  (!multiFingerOn)    // or use manyFingers to make it inmediate, no button to change mode
     {
-      //alert ("multi finger mode on");
-    }
-    else
-    {
-      if(leapvars.leapZ < 0.5)
+      if(leapvars[0].leapZ < 0.5)
       { 
         ctx.beginPath();
         ctx.fillStyle='red';
-        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
+        ctx.arc(leapvars[0].leapX,leapvars[0].leapY,12,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
         //rec pos
         //first pos
         if(leaparray.length == 0)
         {
-          leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
-          leapangles.push(getAngle(leapvars.leapX, leapvars.leapY));
+          leaparray.push(new b2Vec2(leapvars[0].leapX,leapvars[0].leapY));
+          leapangles.push(getAngle(leapvars[0].leapX, leapvars[0].leapY));
 
-          console.log("X is:" + leapvars.leapX + " Y is: "+ leapvars.leapY + " and angle is: " + leapangles[leapangles.length-1]);
+          console.log("X is:" + leapvars[0].leapX + " Y is: "+ leapvars[0].leapY + " and angle is: " + leapangles[leapangles.length-1]);
         }
         else
         {
-          if( tooClose(leapvars.leapX, leapvars.leapY, leaparray[leaparray.length-1].x, leaparray[leaparray.length-1].y)== false)
+          if( tooClose(leapvars[0].leapX, leapvars[0].leapY, leaparray[leaparray.length-1].x, leaparray[leaparray.length-1].y)== false)
           {
-            leaparray.push(new b2Vec2(leapvars.leapX,leapvars.leapY));
-            leapangles.push(getAngle(leapvars.leapX, leapvars.leapY));
-            console.log("X is:" + leapvars.leapX + " Y is: "+ leapvars.leapY + " and angle is: " + leapangles[leapangles.length-1]);
+            leaparray.push(new b2Vec2(leapvars[0].leapX,leapvars[0].leapY));
+            leapangles.push(getAngle(leapvars[0].leapX, leapvars[0].leapY));
+            console.log("X is:" + leapvars[0].leapX + " Y is: "+ leapvars[0].leapY + " and angle is: " + leapangles[leapangles.length-1]);
             
 
 
@@ -1065,7 +1075,7 @@ function leap_simulationStep()
       {
         ctx.beginPath();
         ctx.fillStyle='FFEDA9';
-        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars[0].leapX,leapvars[0].leapY,30*Math.abs((1-leapvars[0].leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1082,6 +1092,35 @@ function leap_simulationStep()
       ctx.closePath();
 
     } //single finger mode close
+    else  //multiFingerOn
+    {
+      for (i=0; i<leapvars.length;i++)
+      {
+        ctx.beginPath();
+        ctx.fillStyle='#FF3300';
+        ctx.arc(leapvars[i].leapX,leapvars[i].leapY,30*Math.abs((1-leapvars[i].leapZ)),0,2*Math.PI);
+        ctx.fill();
+        ctx.closePath();
+      }
+
+
+
+
+      //draw array so far
+      ctx.beginPath();
+      ctx.fillStyle='CC3300';
+      for(var i = 0; i < leaparray.length; i++)
+      {   
+        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+      }
+      ctx.fill();
+      ctx.closePath();
+
+
+
+
+
+    }
   }  
   else  //wheelmode on
   {
@@ -1112,20 +1151,20 @@ function leap_simulationStep()
     ctx.closePath();
 
 
-    if(leapvars.leapZ < 0.5)
+    if(leapvars[0].leapZ < 0.5)
     { 
         ctx.beginPath();
         ctx.fillStyle='#00CCFF';
-        ctx.arc(leapvars.leapX,leapvars.leapY,12,0,2*Math.PI);
+        ctx.arc(leapvars[0].leapX,leapvars[0].leapY,12,0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
         //get closest vertex
-        var shortest = getDist(leaparray[0].x, leaparray[0].y, leapvars.leapX, leapvars.leapY)
+        var shortest = getDist(leaparray[0].x, leaparray[0].y, leapvars[0].leapX, leapvars[0].leapY)
         var ishortest = 0;
         for(var i = 1; i < leaparray.length; i++)
         {
-          var ndist = getDist(leaparray[i].x, leaparray[i].y, leapvars.leapX, leapvars.leapY);
+          var ndist = getDist(leaparray[i].x, leaparray[i].y, leapvars[0].leapX, leapvars[0].leapY);
           if( ndist < shortest)
           {
             shortest = ndist;
@@ -1158,7 +1197,7 @@ function leap_simulationStep()
      {
         ctx.beginPath();
         ctx.fillStyle='#0000CC';
-        ctx.arc(leapvars.leapX,leapvars.leapY,30*Math.abs((1-leapvars.leapZ)),0,2*Math.PI);
+        ctx.arc(leapvars[0].leapX,leapvars[0].leapY,30*Math.abs((1-leapvars[0].leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
         
@@ -1175,10 +1214,34 @@ function leap_simulationStep()
     ctx.closePath();
 
   }
-
-
-
 }
+
+
+function enter_fingers(event)
+{
+  
+  var keycode;
+    if (window.event)
+    {keycode = window.event.keyCode;}
+    else if (event)
+    {keycode = event.which;}
+
+    //if(keycode==13)  //enter pressed
+    //{
+      
+      console.log("key pressed :" + keycode);
+      //for each finger
+      for(i = 0; i<leapvars.length; i++)
+      {
+          leaparray.push(new b2Vec2(leapvars[i].leapX,leapvars[i].leapY));
+          leapangles.push(getAngle(leapvars[i].leapX, leapvars[i].leapY));
+          console.log("X is:" + leapvars[i].leapX + " Y is: "+ leapvars[i].leapY + " and angle is: " + leapangles[leapangles.length-1]);
+      }
+    //}
+
+  //console.log("key pressed :" + keycode);
+}
+
 
 
 function tooClose(x1,y1,x2,y2)
@@ -1233,6 +1296,7 @@ function getAngle(x,y)
 function cw_createLeapCar()//param array of coordinates and wheelpos
  {
   
+  leap_def.vertex_list = new Array();
 
   if (leaparray.length == 0)
   {
@@ -1240,7 +1304,7 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
     leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
+  
     leap_def.vertex_list.push(new b2Vec2(2,0));
     leap_def.vertex_list.push(new b2Vec2(2,2));
     leap_def.vertex_list.push(new b2Vec2(0,2));
@@ -1269,14 +1333,17 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
     leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
     leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.vertex_list = new Array();
-
+  
 
 
     for(var i = 0; i < leaparray.length; i++)
     {
       var trueX = (leaparray[i].x-400)/100;
+      
       var trueY = (200-leaparray[i].y)/100;
+      
+
+
       leap_def.vertex_list.push(new b2Vec2(trueX,trueY));
       //alert("x: " + trueX + " y: " + trueY);
     }  
@@ -1303,6 +1370,14 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
   }   
   
+
+  //log vertexes in all cases
+  for (i=0; i<leap_def.vertex_list.length; i++)
+  {
+    console.log("vertex_list[" + i +"] : " + leap_def.vertex_list[i].x + " and " +  leap_def.vertex_list[i].y  );  
+  }
+  console.log("wheel vertexes : " + leap_def.wheel_vertex1 + " and " + leap_def.wheel_vertex2);
+
 }
 
 
@@ -1320,16 +1395,36 @@ function leap_turnon()
         controller.addStep(region.listener({nearThreshold:50}))
         
         controller.loop(function(frame, done) { 
-          if (frame.cursorPosition) {
-            leap_enabled = true;
+        if (frame.fingers.length == 1) 
+        {
+              leap_enabled = true;
+              manyFingers = false;
+              leapvars.length = 1;
 
-            var leapPosition = region.mapToXY(frame.cursorPosition, canvas.width, canvas.height);
+              var leapPosition = region.mapToXY(frame.cursorPosition, canvas.width, canvas.height);
+              //leapvars[0] = 0;   // para q exista el index en el array, sino no puedo ponerle properties
+              leapvars[0].leapX = leapPosition[0];
+              leapvars[0].leapY = leapPosition[1];
+              leapvars[0].leapZ = leapPosition[2];
+        }
+        else if (frame.fingers.length > 1 && multiFingerOn == true) 
+        {
+              leap_enabled = true;
+              manyFingers = true;
+              leapvars.length = 0;
+              for (var i = 0; i < frame.fingers.length; i++) 
+              {
+                var leapPosition = region.mapToXY(frame.fingers[i].tipPosition, canvas.width, canvas.height);
+                
+                leapvars.push({
+                  leapX : leapPosition[0],
+                  leapY : leapPosition[1],
+                  leapZ : leapPosition[2],
+                });       
+              };
+        }
 
-            leapvars.leapX = leapPosition[0];
-            leapvars.leapY = leapPosition[1];
-            leapvars.leapZ = leapPosition[2];
 
-          }
 
           done();
         });
@@ -1349,7 +1444,7 @@ function leap_end()
    clearInterval(leap_drawInterval);
    clearInterval(leap_runningInterval);
    cw_paused = false;
-
+   multiFingerOn == false;
 
    old_last_drawn_tile = 1;
    cw_resumeSimulation();
@@ -1368,7 +1463,7 @@ function submitBluePrint()
       {
         for (var j = i+1; j< leapangles.length; j++)
         {
-          if(leapangles[i]>leapangles[j])
+          if(leapangles[i]<leapangles[j])
           {
             var banca = leapangles[i];
             leapangles[i] = leapangles[j];
@@ -1410,7 +1505,7 @@ function addWheels(button)
   {
     for (var j = i+1; j< leapangles.length; j++)
     {
-      if(leapangles[i]>leapangles[j])
+      if(leapangles[i]<leapangles[j])
       {
         var banca = leapangles[i];
         leapangles[i] = leapangles[j];

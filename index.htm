@@ -5,6 +5,9 @@
     
     <script type="text/javascript" src="leap.min.js"></script>
 
+
+
+
     <style>
       #mainbox {
         width: 800px;
@@ -86,7 +89,7 @@
 
     </style>
   </head>
-  <body gram_dict="true" style="">
+  <body gram_dict="true" style="" onkeydown="enter_fingers()" >
     <canvas id="mainbox" width="800" height="400"></canvas>
     <div id="graphholder">
       <canvas id="graphcanvas" width="400" height="200"></canvas>
@@ -154,7 +157,8 @@
 
       <h3>Instructions</h3>
       Using one finger over a Leap Motion sensor, draw the initial shape of your car. Keep in mind that all dots will be linked to the center (0,0) position. There is an imaginary touch-screen in the air above your leap sensor... you draw by pushing forward against it.<br>
-      When you're happy with the shape, you can either choose on what vertexes to put wheels by clicking on "add wheels" or you can leave the wheel positions to chance by directly clicking "Submit BluePrint"<br>
+      Click 'Change Draw Mode' to switch to an alternative way using multiple fingers. You will see all of your fingers over the sensor represented as circles, if you press any key these positions will be added to the vertex list.<br>
+      When you're happy with the shape, you can choose on what vertexes to put wheels by clicking on "add wheels". You can also choose to skip this step and leave the wheel positions to chance by directly clicking "Submit BluePrint"<br>
       In the wheel mode, drawing works in a similar way by pushing against an imaginary touch screen. Point near one of the axis of your car to place a wheel on that spot. You can only place up to two wheels right now. The wheel size and density will be random.<br>
       That's it! Click on "Submit BluePrint" to create your car and see how it fails against random creations!<br>
 
@@ -178,4 +182,7 @@
     <script src="box2d.js"></script>
     <script src="ghost.js"></script>
     <script src="cawro.js"></script>
+
+
+
 </body><div class="gr-context gr-dict gr-context-loader" style="display: none;"><span class="gr-triangle"></span><div class="gr-placeholder"></div><a href="http://www.grammarly.com/?utm_source=dict&utm_medium=link&utm_campaign=chrome_plg" target="_blank" class="gr-hint-settings"></a><strong class="gr-title"></strong><div class="gr-dict-content"></div></div></html>
