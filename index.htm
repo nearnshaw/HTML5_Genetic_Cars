@@ -4,7 +4,7 @@
     <title>HTML5 Genetic Algorithm 2D Car Thingy - Chrome recommended</title>
     
     <script type="text/javascript" src="leap.min.js"></script>
-
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 
 
 
@@ -40,7 +40,7 @@
       .step
       {
         margin-bottom:5px;
-        border-bottom: 1px dotted #958955;
+        
         padding:2px;
       }
 
@@ -50,6 +50,9 @@
         border: 1px solid #615521;
       }
 
+      #morestuff
+      {
+      }
 
       #graphholder {
         position: relative;
@@ -147,7 +150,11 @@
           <input type="button" value="Add Wheels" onclick="addWheels()">
         </div>
         <div id ="step3" class="step">
-          <input type="button" value="Submit BluePrint" onclick="submitBluePrint()">
+          <a class="btn btn-primary btn-medium pull-right" onclick="submitBluePrint()">
+              Submit BluePrint
+          </a>
+          <br>
+          <br>
         </div>
       </div>  
     <br>
