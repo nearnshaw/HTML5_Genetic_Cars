@@ -115,8 +115,11 @@ function ghost_draw_frame(ctx, ghost) {
     ghost_draw_circle(ctx, frame.wheel2[w].pos, frame.wheel2[w].rad, frame.wheel2[w].ang);
 
   // chassis style
-  ctx.strokeStyle = "#fbb";
-  ctx.fillStyle = "#fee";
+  //ctx.strokeStyle = "#fbb";
+  //ctx.fillStyle = "#fee";
+  ctx.strokeStyle = "#85E0E0";
+  ctx.fillStyle = "#CAEAFF"; 
+
   ctx.lineWidth = 1/zoom;
   ctx.beginPath();
   for (c in frame.chassis)

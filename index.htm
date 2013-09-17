@@ -4,15 +4,21 @@
     <title>HTML5 Genetic Algorithm 2D Car Thingy - Chrome recommended</title>
     
     <script type="text/javascript" src="leap.min.js"></script>
-
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 
 
 
     <style>
+
+      body
+      {
+         margin-left:10px;
+      }
+
       #mainbox {
         width: 800px;
         height: 400px;
-        border: 1px solid red;
+        border: 4px solid #222222;
       }
 
       #div {
@@ -23,15 +29,42 @@
 
       #data {
         position: absolute;
-        left: 810px;
-        top: 20px;
+        left: 825px;
+        top: 15px;
         width: 300px;
         height: 400px;
+      }
+
+      #menu
+      {
+        border: 5px solid #615521;
+        border-radius: 15px;
+        background: #E6E8CC;
+        padding:10px;
+      }
+
+      .step
+      {
+        margin-bottom:5px;
+        
+        padding:2px;
+        height:30px;
+      }
+
+      .current
+      {
+        background: white;
+        border: 1px solid #615521;
+      }
+
+      #morestuff
+      {
       }
 
       #graphholder {
         position: relative;
       }
+
 
       #graphholder .scale {
         position: absolute;
@@ -105,27 +138,49 @@
       <canvas id="minimap" width="800" height="200"></canvas>
     </div>
     <div id="topscoreholder">
-    <input type="button" value="View top replay" onclick="cw_toggleGhostReplay(this)"><br>
+   
       <div id="topscores">Top Scores:<br>#1: 136.88 d:131.59 h:-2.33/3.17m (gen 1)<br>#2: 130.15 d:125.2 h:-2.18/3.21m (gen 2)<br>#3: 127.27 d:122.7 h:-2.89/3.09m (gen 3)<br>#4: 113.44 d:107.53 h:-0.89/2.69m (gen 0)<br></div>
     </div>
-    <div id="debug"></div>
+   
     <div id="data">
-      <input type="button" value="Change Draw Mode" onclick="toggleMultiFingerOn()">
-      <input type="button" value="Start Over" onclick="resetDots()">
-      <input type="button" value="Add Wheels" onclick="addWheels()">
-      <input type="button" value="Submit BluePrint" onclick="submitBluePrint()">
-    <br>
-    <br>
-    <br>
-      <div>
 
-        Create new world with seed:
-        <input type="text" value="Enter any string" id="newseed" onfocus="this.select();">
-        <input type="button" value="Go!" onclick="cw_confirmResetWorld()">
-      </div>
-      <div>
+      <div id="menu">
+
+        <div id="step0" class="step">
+           <a id="startover" class="btn btn-medium  pull-left" onclick="resetDots()">
+          Start Over
+          </a>
+        </div>
+        <div id="step1" class="step">
+          <a id="chmode" class="btn btn-medium  pull-left" onclick="toggleMultiFingerOn()">
+          Change Mode
+          </a>
+           <a id="dellast" class="btn btn-medium  pull-left" onclick="deleteLast()">
+           Delete Last Dot
+           </a>
+        </div>
+        <div id ="step2" class="step">
+          <a id="adwh" class="btn btn-primary btn-medium pull-left" onclick="addWheels()">
+            Add Wheels
+            </a>
+        </div>
+        <br>
+        <div id ="step3" class="step">
+          <a id="create" class="btn btn-medium pull-right" onclick="submitBluePrint()">
+              Create Car
+          </a>
+          <br>
+          <br>
+        </div>
+      </div>  
+    <br>
+
+      
+      <div id="more_stuff">
         Mutation rate:
         <select id="mutationrate" onchange="cw_setMutation(this.options[this.selectedIndex].value)">
+      </div>
+      <div id="scores">
           <option value="0">0%</option>
           <option value="0.01">1%</option>
           <option value="0.02">2%</option>
@@ -146,6 +201,11 @@
       <div id="distancemeter">distance: 55.08 meters<br>height: 0.26 meters</div>
       <div id="health">Health: 600</div>
       <div id="cars">Car #1: 106.52m +  5.07 m/s = 111.59pts<br>Car #2: 108.12m +  6.16 m/s = 114.28pts<br>Car #3: 133.39m +  4.75 m/s = 138.14pts<br>Car #4: </div>
+    <br>
+    <br>
+        Create new world with seed:
+        <input type="text" value="Enter any string" id="newseed" onfocus="this.select();">
+        <input type="button" value="Go!" onclick="cw_confirmResetWorld()">
     </div>
     <div id="explanation">
       <h3>Explanation</h3>
