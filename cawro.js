@@ -51,7 +51,7 @@ var cw_topScores = new Array();
 var cw_graphTop = new Array();
 var cw_graphElite = new Array();
 var cw_graphAverage = new Array();
-
+var cw_graphLeap = new Array();
 
 
 var gen_champions = 2;
@@ -650,8 +650,20 @@ function cw_drawCar() {
     var rgbcolor = "rgb("+color+","+color+","+color+")";
     cw_drawCircle(b, s.m_p, s.m_radius, b.m_sweep.a, rgbcolor);
   }
-  ctx.strokeStyle = "#c44";
-  ctx.fillStyle = "#fdd";
+  if(current_car_index == 0)
+  {
+    //green
+    //ctx.strokeStyle = "#66FF66";
+    //ctx.fillStyle = "#C2FFC2";
+    //blue
+    ctx.strokeStyle = "#33CCCC";
+    ctx.fillStyle = "#A8DCFF"; 
+  }
+  else
+  {
+    ctx.strokeStyle = "#c44";
+    ctx.fillStyle = "#fdd";
+  }
   ctx.beginPath();
   var b = myCar.chassis;
   for (f = b.GetFixtureList(); f; f = f.m_next) {
@@ -733,7 +745,18 @@ function cw_drawCircle(body, center, radius, angle, color) {
 function cw_storeGraphScores() {
   cw_graphAverage.push(cw_average(cw_carScores));
   cw_graphElite.push(cw_eliteaverage(cw_carScores));
-  cw_graphTop.push(cw_carScores[0].v);
+  cw_graphTop.push(cw_carScores[1].v);
+  //get position of leapcar in car scores
+  var lp = 0;
+  for (var l = 0; l < cw_carScores.length; l++)
+  {
+    if(cw_carScores[l].i == 0)
+    {
+      lp = l;
+    }
+  }
+  cw_graphLeap.push(cw_carScores[lp].v);
+  //cw_graphLeap.push(cw_carScores[0].v);
 }
 
 function cw_plotTop() {
@@ -749,7 +772,7 @@ function cw_plotTop() {
 
 function cw_plotElite() {
   var graphsize = cw_graphElite.length;
-  graphctx.strokeStyle = "#0f0";
+  graphctx.strokeStyle = "#f00";
   graphctx.beginPath();
   graphctx.moveTo(0,0);
   for(var k = 0; k < graphsize; k++) {
@@ -758,9 +781,21 @@ function cw_plotElite() {
   graphctx.stroke();
 }
 
+function cw_plotLeap() {
+  var graphsize = cw_graphLeap.length;
+  graphctx.strokeStyle = "#00f";
+  graphctx.beginPath();
+  graphctx.moveTo(0,0);
+  for(var k = 0; k < graphsize; k++) {
+    graphctx.lineTo(400*(k+1)/graphsize,cw_graphLeap[k]);
+  }
+  graphctx.stroke();
+}
+
+
 function cw_plotAverage() {
   var graphsize = cw_graphAverage.length;
-  graphctx.strokeStyle = "#00f";
+  graphctx.strokeStyle = "#f00";
   graphctx.beginPath();
   graphctx.moveTo(0,0);
   for(var k = 0; k < graphsize; k++) {
@@ -772,10 +807,11 @@ function cw_plotAverage() {
 function plot_graphs() {
   cw_storeGraphScores();
   cw_clearGraphics();
-  cw_plotAverage();
+  //cw_plotAverage();
   cw_plotElite();
   cw_plotTop();
   cw_listTopScores();
+  cw_plotLeap();
 }
 
 
@@ -840,7 +876,7 @@ function cw_kill() {
   var position = myCar.maxPosition;
   var score = position + avgspeed;
   document.getElementById("cars").innerHTML += Math.round(position*100)/100 + "m + " +" "+Math.round(avgspeed*100)/100+" m/s = "+ Math.round(score*100)/100 +"pts<br />";
-  ghost_compare_to_replay(replay, ghost, score);
+  ghost_compare_to_replay(replay, ghost, 0);
   cw_carScores.push({ i:current_car_index, v:score, s: avgspeed, x:position, y:myCar.maxPositiony, y2:myCar.minPositiony });
   current_car_index++;
   cw_killCar();
@@ -900,6 +936,7 @@ function cw_resetPopulation() {
   cw_carScores = new Array();
   cw_topScores = new Array();
   cw_graphTop = new Array();
+  cw_graphLeap = new Array();
   cw_graphElite = new Array();
   cw_graphAverage = new Array();
   velocityFIFO = new Array();
@@ -1371,8 +1408,8 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
 
     
-    leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
+    leap_def.wheel_density1 = 75;
+    leap_def.wheel_density2 = 75;
   
 
 
@@ -1502,6 +1539,8 @@ function submitBluePrint()
 {
   //>>>>>remove editing buttons
   console.log("number of wheels:" + wheelPos.length);
+   document.getElementById("menu").style.opacity = "0";
+   document.getElementById("more_stuff").style.opacity = "0";
 
   if(!addWheelMode)
   {
@@ -1541,6 +1580,10 @@ function resetDots()
   leapangles.length = 0;
   wheelPos.length = 0;
   addWheelMode = false;
+
+   document.getElementById("adwh").classList.add("btn-primary");
+  document.getElementById("create").classList.remove("btn-primary");
+
 }
 
 
@@ -1553,6 +1596,8 @@ function deleteLast()
 
 function addWheels(button)
 {
+  document.getElementById("adwh").classList.remove("btn-primary");
+  document.getElementById("create").classList.add("btn-primary");
   addWheelMode = !addWheelMode;
 
 

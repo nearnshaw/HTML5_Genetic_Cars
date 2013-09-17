@@ -9,6 +9,12 @@
 
 
     <style>
+
+      body
+      {
+         margin-left:10px;
+      }
+
       #mainbox {
         width: 800px;
         height: 400px;
@@ -42,6 +48,7 @@
         margin-bottom:5px;
         
         padding:2px;
+        height:30px;
       }
 
       .current
@@ -140,18 +147,27 @@
       <div id="menu">
 
         <div id="step0" class="step">
-           <input type="button" value="Start Over" onclick="resetDots()">
+           <a id="startover" class="btn btn-medium  pull-left" onclick="resetDots()">
+          Start Over
+          </a>
         </div>
         <div id="step1" class="step">
-          <input type="button" value="Change Mode" onclick="toggleMultiFingerOn()">
-          <input type="button" value="Delete Last Point" onclick="deleteLast()">
+          <a id="chmode" class="btn btn-medium  pull-left" onclick="toggleMultiFingerOn()">
+          Change Mode
+          </a>
+           <a id="dellast" class="btn btn-medium  pull-left" onclick="deleteLast()">
+           Delete Last Dot
+           </a>
         </div>
         <div id ="step2" class="step">
-          <input type="button" value="Add Wheels" onclick="addWheels()">
+          <a id="adwh" class="btn btn-primary btn-medium pull-left" onclick="addWheels()">
+            Add Wheels
+            </a>
         </div>
+        <br>
         <div id ="step3" class="step">
-          <a class="btn btn-primary btn-medium pull-right" onclick="submitBluePrint()">
-              Submit BluePrint
+          <a id="create" class="btn btn-medium pull-right" onclick="submitBluePrint()">
+              Create Car
           </a>
           <br>
           <br>
@@ -163,6 +179,8 @@
       <div id="more_stuff">
         Mutation rate:
         <select id="mutationrate" onchange="cw_setMutation(this.options[this.selectedIndex].value)">
+      </div>
+      <div id="scores">
           <option value="0">0%</option>
           <option value="0.01">1%</option>
           <option value="0.02">2%</option>
