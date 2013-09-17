@@ -1,0 +1,15 @@
+
+
+-instructions while drawing
+-undo button
+
+-control wheel size
+-any number of wheels
+
+-show ghost of your own car always
+-show stats for your own car
+
+
+bugs:
+-sometimes a car has vertexes w undefined leapX
+-sometimes when reloading cursor is not drawn (but log appears)

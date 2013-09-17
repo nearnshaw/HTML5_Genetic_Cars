@@ -36,9 +36,10 @@ var fogdistance = document.getElementById("minimapfog").style;
 var leaparray = new Array();
 var leapangles = new Array();
 var wheelPos = new Array();
+var wheelSize = new Array();
 var leap_def = new Object();
-var multiFingerOn = false;
-var manyFingers = false;
+var multiFingerOn = true;
+var manyFingers = true;
 var addWheelMode = false;
 
 
@@ -50,7 +51,7 @@ var cw_topScores = new Array();
 var cw_graphTop = new Array();
 var cw_graphElite = new Array();
 var cw_graphAverage = new Array();
-
+var cw_graphLeap = new Array();
 
 
 var gen_champions = 2;
@@ -649,8 +650,20 @@ function cw_drawCar() {
     var rgbcolor = "rgb("+color+","+color+","+color+")";
     cw_drawCircle(b, s.m_p, s.m_radius, b.m_sweep.a, rgbcolor);
   }
-  ctx.strokeStyle = "#c44";
-  ctx.fillStyle = "#fdd";
+  if(current_car_index == 0)
+  {
+    //green
+    //ctx.strokeStyle = "#66FF66";
+    //ctx.fillStyle = "#C2FFC2";
+    //blue
+    ctx.strokeStyle = "#33CCCC";
+    ctx.fillStyle = "#A8DCFF"; 
+  }
+  else
+  {
+    ctx.strokeStyle = "#c44";
+    ctx.fillStyle = "#fdd";
+  }
   ctx.beginPath();
   var b = myCar.chassis;
   for (f = b.GetFixtureList(); f; f = f.m_next) {
@@ -732,7 +745,18 @@ function cw_drawCircle(body, center, radius, angle, color) {
 function cw_storeGraphScores() {
   cw_graphAverage.push(cw_average(cw_carScores));
   cw_graphElite.push(cw_eliteaverage(cw_carScores));
-  cw_graphTop.push(cw_carScores[0].v);
+  cw_graphTop.push(cw_carScores[1].v);
+  //get position of leapcar in car scores
+  var lp = 0;
+  for (var l = 0; l < cw_carScores.length; l++)
+  {
+    if(cw_carScores[l].i == 0)
+    {
+      lp = l;
+    }
+  }
+  cw_graphLeap.push(cw_carScores[lp].v);
+  //cw_graphLeap.push(cw_carScores[0].v);
 }
 
 function cw_plotTop() {
@@ -748,7 +772,7 @@ function cw_plotTop() {
 
 function cw_plotElite() {
   var graphsize = cw_graphElite.length;
-  graphctx.strokeStyle = "#0f0";
+  graphctx.strokeStyle = "#f00";
   graphctx.beginPath();
   graphctx.moveTo(0,0);
   for(var k = 0; k < graphsize; k++) {
@@ -757,9 +781,21 @@ function cw_plotElite() {
   graphctx.stroke();
 }
 
+function cw_plotLeap() {
+  var graphsize = cw_graphLeap.length;
+  graphctx.strokeStyle = "#00f";
+  graphctx.beginPath();
+  graphctx.moveTo(0,0);
+  for(var k = 0; k < graphsize; k++) {
+    graphctx.lineTo(400*(k+1)/graphsize,cw_graphLeap[k]);
+  }
+  graphctx.stroke();
+}
+
+
 function cw_plotAverage() {
   var graphsize = cw_graphAverage.length;
-  graphctx.strokeStyle = "#00f";
+  graphctx.strokeStyle = "#f00";
   graphctx.beginPath();
   graphctx.moveTo(0,0);
   for(var k = 0; k < graphsize; k++) {
@@ -771,10 +807,11 @@ function cw_plotAverage() {
 function plot_graphs() {
   cw_storeGraphScores();
   cw_clearGraphics();
-  cw_plotAverage();
+  //cw_plotAverage();
   cw_plotElite();
   cw_plotTop();
   cw_listTopScores();
+  cw_plotLeap();
 }
 
 
@@ -839,7 +876,7 @@ function cw_kill() {
   var position = myCar.maxPosition;
   var score = position + avgspeed;
   document.getElementById("cars").innerHTML += Math.round(position*100)/100 + "m + " +" "+Math.round(avgspeed*100)/100+" m/s = "+ Math.round(score*100)/100 +"pts<br />";
-  ghost_compare_to_replay(replay, ghost, score);
+  ghost_compare_to_replay(replay, ghost, 0);
   cw_carScores.push({ i:current_car_index, v:score, s: avgspeed, x:position, y:myCar.maxPositiony, y2:myCar.minPositiony });
   current_car_index++;
   cw_killCar();
@@ -899,6 +936,7 @@ function cw_resetPopulation() {
   cw_carScores = new Array();
   cw_topScores = new Array();
   cw_graphTop = new Array();
+  cw_graphLeap = new Array();
   cw_graphElite = new Array();
   cw_graphAverage = new Array();
   velocityFIFO = new Array();
@@ -1041,6 +1079,14 @@ function leap_simulationStep()
   {
     if  (!multiFingerOn)    // or use manyFingers to make it inmediate, no button to change mode
     {
+
+    //instructions
+    ctx.fillStyle = '#f00';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('Push one finger forward to add vertexes', 10, 390);
+
+
       if(leapvars[0].leapZ < 0.5)
       { 
         ctx.beginPath();
@@ -1094,6 +1140,11 @@ function leap_simulationStep()
     } //single finger mode close
     else  //multiFingerOn
     {
+
+
+
+
+
       for (i=0; i<leapvars.length;i++)
       {
         ctx.beginPath();
@@ -1103,6 +1154,11 @@ function leap_simulationStep()
         ctx.closePath();
       }
 
+      //instructions
+      ctx.fillStyle = '#f00';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('Position several fingers, then press any key to print vertex positions', 10, 390);
 
 
 
@@ -1111,7 +1167,11 @@ function leap_simulationStep()
       ctx.fillStyle='CC3300';
       for(var i = 0; i < leaparray.length; i++)
       {   
+        if(leaparray[i].y)
+        {
+        
         ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        }
       }
       ctx.fill();
       ctx.closePath();
@@ -1124,6 +1184,16 @@ function leap_simulationStep()
   }  
   else  //wheelmode on
   {
+
+    //instructions
+    ctx.fillStyle = '#f00';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('Push forward on vertex to add a wheel and enlarge it. 2 Wheels Max.', 10, 390);
+
+
+
+
 
     //draw array
     ctx.beginPath();
@@ -1177,20 +1247,27 @@ function leap_simulationStep()
           if(wheelPos.length == 0)
             {
               wheelPos.push(ishortest);
+              wheelSize.push(leapvars[0].leapZ);
               console.log("1st wheelpos added " + wheelPos[0]);
             }
           else if (wheelPos.length == 1 && ishortest !== wheelPos[0])
             {
               wheelPos.push(ishortest);
+              wheelSize.push(leapvars[0].leapZ);
               console.log("2nd wheelpos added " + wheelPos[1]);
             }
           else if(ishortest !== wheelPos[0] && ishortest !== wheelPos[1])
           {
             wheelPos.shift();
             wheelPos.push(ishortest);
+            wheelSize.shift();
+            wheelSize.push(leapvars[0].leapZ);
             console.log("wheelpos has " + wheelPos[0] + " and " + wheelPos[1]);
           }
-          //alert("closest: " + ishortest + " at: " + shortest + " wheelpos length " + wheelPos.length);
+          else if (leapvars[0].leapZ < wheelSize[wheelSize.length-1])   //make wheels larger
+          {
+            wheelSize[wheelSize.length-1] =leapvars[0].leapZ;
+          } 
         }       
      } 
      else  //leapZ > 0.5   FAR
@@ -1208,7 +1285,8 @@ function leap_simulationStep()
     ctx.fillStyle='006666';
     for(var i=0; i < wheelPos.length;i++)
     {
-      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,20,0,2*Math.PI);  
+      var ws = 70-(wheelSize[i]*100);
+      ctx.arc(leaparray[wheelPos[i]].x,leaparray[wheelPos[i]].y,ws,0,2*Math.PI);  
     }
     ctx.fill();
     ctx.closePath();
@@ -1235,7 +1313,7 @@ function enter_fingers(event)
       {
           leaparray.push(new b2Vec2(leapvars[i].leapX,leapvars[i].leapY));
           leapangles.push(getAngle(leapvars[i].leapX, leapvars[i].leapY));
-          console.log("X is:" + leapvars[i].leapX + " Y is: "+ leapvars[i].leapY + " and angle is: " + leapangles[leapangles.length-1]);
+          console.log("for finger " + i + " X is:" + leapvars[i].leapX + " Y is: "+ leapvars[i].leapY + " and angle is: " + leapangles[leapangles.length-1]);
       }
     //}
 
@@ -1329,10 +1407,9 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
 
 
 
-    leap_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
-    leap_def.wheel_density1 = Math.random()*wheelMaxDensity+wheelMinDensity;
-    leap_def.wheel_density2 = Math.random()*wheelMaxDensity+wheelMinDensity;
+    
+    leap_def.wheel_density1 = 75;
+    leap_def.wheel_density2 = 75;
   
 
 
@@ -1352,6 +1429,9 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     //if no wheels
     if(wheelPos.length <2)
     {
+      leap_def.wheel_radius1 = Math.random()*wheelMaxRadius+wheelMinRadius;
+      leap_def.wheel_radius2 = Math.random()*wheelMaxRadius+wheelMinRadius;
+
       var v2;
       leap_def.wheel_vertex1 = Math.floor(Math.random()*8)%8;
       v2 = leap_def.wheel_vertex1;
@@ -1365,6 +1445,10 @@ function cw_createLeapCar()//param array of coordinates and wheelpos
     {
       leap_def.wheel_vertex1 = wheelPos[0];
       leap_def.wheel_vertex2 = wheelPos[1];
+
+      leap_def.wheel_radius1 = 0.5-wheelSize[0]+0.2;
+      leap_def.wheel_radius2 = 0.5-wheelSize[1]+0.2;
+
     }
     //if wheels use wheelPos
 
@@ -1455,6 +1539,8 @@ function submitBluePrint()
 {
   //>>>>>remove editing buttons
   console.log("number of wheels:" + wheelPos.length);
+   document.getElementById("menu").style.opacity = "0";
+   document.getElementById("more_stuff").style.opacity = "0";
 
   if(!addWheelMode)
   {
@@ -1491,12 +1577,27 @@ function toggleMultiFingerOn()
 function resetDots()
 {
   leaparray.length = 0;
+  leapangles.length = 0;
   wheelPos.length = 0;
   addWheelMode = false;
+
+   document.getElementById("adwh").classList.add("btn-primary");
+  document.getElementById("create").classList.remove("btn-primary");
+
+}
+
+
+function deleteLast()
+{
+  leaparray.pop();
+  leapangles.pop();
+
 }
 
 function addWheels(button)
 {
+  document.getElementById("adwh").classList.remove("btn-primary");
+  document.getElementById("create").classList.add("btn-primary");
   addWheelMode = !addWheelMode;
 
 
