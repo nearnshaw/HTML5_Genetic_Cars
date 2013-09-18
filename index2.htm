@@ -39,8 +39,8 @@
       #tablero
       {
         
-        
-        
+        margin-left: 825px;
+        margin-top: 250px;
         width: 300px;
         height: 300px;
         border: 3px solid #5195F5;
@@ -72,12 +72,12 @@
         border: 1px solid #615521;
       }
 
-      #more_stuff
+      #morestuff
       {
-        padding : 10px;
-        border: 2px solid #444;
-        border-radius:5px;
-        margin-left:15px;
+        width:100px;
+        position: absolute;
+        margin-left: 825px;
+        margin-top:500px;
       }
 
       #graphholder {
@@ -102,8 +102,8 @@
       }
 
       #topscoreholder {
-        width: 200px;
-        height: 300px;
+        width: 300px;
+        height: 400px;
         position: absolute;
         top: 420px;
         left: 445px;
@@ -160,11 +160,6 @@
   </head>
   <body gram_dict="true" style="" onkeydown="enter_fingers()" >
     <canvas id="mainbox" width="800" height="400"></canvas>
-
-
-     
-
-
     <div id="graphholder">
       <canvas id="graphcanvas" width="400" height="200"></canvas>
       <div class="scale" id="s100">200</div>
@@ -214,7 +209,10 @@
           <br>
         </div>
       </div>  
-      <br>
+    <br>
+
+      
+      </div>
 
       <div id="tablero">
         <div id="generation"><h2>Generation 4 </h2></div>
@@ -229,13 +227,14 @@
         <div id="cars">Car #1: 106.52m +  5.07 m/s = 111.59pts<br>Car #2: 108.12m +  6.16 m/s = 114.28pts<br>Car #3: 133.39m +  4.75 m/s = 138.14pts<br>Car #4: 
         </div>
       </div>
-        
-      <div id="more_stuff">
-        <h4>Advanced Settings:</h4>
+    <br>
+    <br>  
+    </div>
+     <div id="more_stuff">
         Mutation rate:<br>
         <select id="mutationrate" onchange="cw_setMutation(this.options[this.selectedIndex].value)">
       
-      
+      <div id="scores">
           <option value="0">0%</option>
           <option value="0.01">1%</option>
           <option value="0.02">2%</option>
@@ -254,7 +253,7 @@
          Generation Size:<br>
         <select id="gensize" onchange="cw_setPopSize(this.options[this.selectedIndex].value)">
       
-      
+      <div id="gen">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -270,24 +269,7 @@
           <option value="13">13</option>
         </select>
 
-
-        Create new world with seed:
-        <br>
-        <input type="text" value="Enter any string" id="newseed" onfocus="this.select();">
-        <input type="button" value="Go!" onclick="cw_confirmResetWorld()">
-
       </div>
-
-
-
-
-    </div>
-
-
-    <br>
-    <br>  
-    </div>
-     
      
     
 
@@ -296,7 +278,10 @@
     <div id="explanation">
 
         <br>
-        
+        Create new world with seed:
+        <br>
+        <input type="text" value="Enter any string" id="newseed" onfocus="this.select();">
+        <input type="button" value="Go!" onclick="cw_confirmResetWorld()">
 
       <h3>Explanation</h3>
       This is a modification of <a href="http://rednuht.org/genetic_cars_2/"> this </a> original page by <a href="http://rednuht.org/"> this guy </a> (thanks!!) ...which is in turn based on <a href="http://boxcar2d.com/">BoxCar2D</a>.<br>

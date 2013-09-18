@@ -41,6 +41,7 @@ var leap_def = new Object();
 var multiFingerOn = true;
 var manyFingers = true;
 var addWheelMode = false;
+var healthBar = 100;
 
 
 
@@ -90,6 +91,7 @@ var deathSpeed = 0.1;
 var max_car_health = box2dfps * 10;
 var car_health = max_car_health;
 
+
 var motorSpeed = 20;
 
 var swapPoint1 = 0;
@@ -127,8 +129,7 @@ function debug(str, clear) {
 }
 
 function showDistance(distance, height) {
-  distanceMeter.innerHTML = "distance: "+distance+" meters<br />";
-  distanceMeter.innerHTML += "height: "+height+" meters";
+  distanceMeter.innerHTML = distance+" meters";
   minimarkerdistance.left = ((distance + 5) * minimapscale) + "px";
   if(distance > minimapfogdistance) {
     fogdistance.width = 800 - (distance + 15) * minimapscale + "px";
@@ -387,13 +388,21 @@ function cw_generationZero() {
 
   
   gen_counter = 0;
-  document.getElementById("generation").innerHTML = "generation 0";
+  document.getElementById("generation").innerHTML = "<h2>Generation 0</h2>";
 }
 
 function cw_createNextCar() {
   car_health = max_car_health;
+  healthbar = 100;
   cw_clearVelocityFIFO();
-  document.getElementById("cars").innerHTML += "Car #"+(current_car_index+1)+": ";
+  if(current_car_index==0)
+  {
+    document.getElementById("cars").innerHTML += "<b class='bl'>Your Car:   </b>";
+  }
+  else
+  {
+  document.getElementById("cars").innerHTML += "<b  class='rd'>Rndm Car"+(current_car_index)+": </b>";
+  }
   var newcar = new cw_Car(cw_carGeneration[current_car_index]);
   newcar.maxPosition = 0;
   newcar.maxPositiony = 0;
@@ -445,7 +454,7 @@ function cw_nextGeneration() {
   cw_carScores = new Array();
   cw_carGeneration = newGeneration;
   gen_counter++;
-  document.getElementById("generation").innerHTML = "generation "+gen_counter;
+  document.getElementById("generation").innerHTML = "<h2>Generation "+gen_counter + "</h2>";
   document.getElementById("cars").innerHTML = "";
 }
 
@@ -571,6 +580,10 @@ function cw_chooseParent(curparent, attributeIndex) {
 
 function cw_setMutation(mutation) {
   gen_mutation = parseFloat(mutation);
+}
+
+function cw_setPopSize(population) {
+  generationSize = parseFloat(population);
 }
 
 function cw_setEliteSize(clones) {
@@ -808,7 +821,7 @@ function plot_graphs() {
   cw_storeGraphScores();
   cw_clearGraphics();
   //cw_plotAverage();
-  cw_plotElite();
+  //cw_plotElite();
   cw_plotTop();
   cw_listTopScores();
   cw_plotLeap();
@@ -875,7 +888,7 @@ function cw_kill() {
   var avgspeed = (myCar.maxPosition / myCar.frames) * box2dfps;
   var position = myCar.maxPosition;
   var score = position + avgspeed;
-  document.getElementById("cars").innerHTML += Math.round(position*100)/100 + "m + " +" "+Math.round(avgspeed*100)/100+" m/s = "+ Math.round(score*100)/100 +"pts<br />";
+  document.getElementById("cars").innerHTML +=  Math.round(score*100)/100 +" points <br />";
   ghost_compare_to_replay(replay, ghost, 0);
   cw_carScores.push({ i:current_car_index, v:score, s: avgspeed, x:position, y:myCar.maxPositiony, y2:myCar.minPositiony });
   current_car_index++;
@@ -908,12 +921,18 @@ function cw_checkDeath() {
     car_health = max_car_health;
     myCar.maxPosition = myCar.getPosition().x;
   } else {
-    car_health--;
+    car_health  -=5;
+    healthBar -= 5;
     if(car_health == 0) {
+      var healthpercent = 0;
+      document.getElementById("health").style.width = healthpercent + "%";
       return true;
     }
   }
-  document.getElementById("health").innerHTML = "Health: " + car_health;
+  //var healthpercent = car_health*100/(box2dfps * 10);
+  //document.getElementById("health").style.width = healthpercent + "%";
+  document.getElementById("health").style.width = healthbar + "%";
+
 
   // check speed
   var result = 0;
@@ -1541,7 +1560,7 @@ function submitBluePrint()
   console.log("number of wheels:" + wheelPos.length);
    document.getElementById("menu").style.opacity = "0";
    document.getElementById("more_stuff").style.opacity = "0";
-
+   document.getElementById("tablero").style.opacity = "1";
   if(!addWheelMode)
   {
       //order leaparray by getAngle(x,y)
