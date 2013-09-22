@@ -117,7 +117,7 @@ function ghost_draw_frame(ctx, ghost) {
   // chassis style
   //ctx.strokeStyle = "#fbb";
   //ctx.fillStyle = "#fee";
-  ctx.strokeStyle = "#85E0E0";
+  ctx.strokeStyle = "#95F0F0";
   ctx.fillStyle = "#CAEAFF"; 
 
   ctx.lineWidth = 1/zoom;

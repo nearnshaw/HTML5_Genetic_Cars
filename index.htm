@@ -8,6 +8,8 @@
 
 
 
+
+
     <style>
 
       body
@@ -42,7 +44,7 @@
         
         
         width: 300px;
-        height: 300px;
+        
         border: 3px solid #5195F5;
         border-radius: 25px;
         background: #DAE5F5;
@@ -108,6 +110,7 @@
         top: 420px;
         left: 445px;
         font-size: 11px;
+        opacity:0;
       }
 
       #minimap {
@@ -117,7 +120,8 @@
       #minimapholder {
         position: relative;
         width: 800px;
-        height: 200px;
+        height: 0px;
+        opacity:0;
       }
 
       #minimapmarker {
@@ -125,13 +129,13 @@
         left: 0;
         top: 0;
         width: 1px;
-        height: 200px;
+        height: 0px;
         z-index: 5;
       }
 
       #minimapfog {
         width: 798px;
-        height: 198px;
+        height: 8px;
         position: absolute;
         top: 1px;
         right: 1px;
@@ -217,7 +221,7 @@
       <br>
 
       <div id="tablero">
-        <div id="generation"><h2>Generation 4 </h2></div>
+        <div id="generation"></div>
         <div id="distance"><span><u><b>Distance:</b></u></span><span id="distancemeter" style="margin-left:10px"> 55.08 meters</span></div>
         <br>
         <div ><u><b>Health:</b></u> </div>
@@ -226,7 +230,7 @@
         </div>
         
         <br>
-        <div id="cars">Car #1: 106.52m +  5.07 m/s = 111.59pts<br>Car #2: 108.12m +  6.16 m/s = 114.28pts<br>Car #3: 133.39m +  4.75 m/s = 138.14pts<br>Car #4: 
+        <div id="cars">
         </div>
       </div>
         
