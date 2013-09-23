@@ -882,6 +882,11 @@ function simulationStep() {
   if(cw_checkDeath()) {
     cw_kill();
   }
+  
+  if (velocityFIFO[velocityIndex] < 10*deathSpeed)
+  {
+    healthbar -=1;
+  }
 }
 
 function cw_kill() {
@@ -899,6 +904,7 @@ function cw_kill() {
   }
   myCar = cw_createNextCar();
   last_drawn_tile = 0;
+  //healthbar = 100;
 }
 
 function cw_storeVelocity(velocity) {
@@ -925,13 +931,13 @@ function cw_checkDeath() {
     healthBar -= 5;
     if(car_health == 0) {
       var healthpercent = 0;
-      document.getElementById("health").style.width = healthpercent + "%";
+      //document.getElementById("health").style.width = healthpercent + "%";
       return true;
     }
   }
   //var healthpercent = car_health*100/(box2dfps * 10);
   //document.getElementById("health").style.width = healthpercent + "%";
-  document.getElementById("health").style.width = healthbar + "%";
+  //document.getElementById("health").style.width = healthbar + "%";
 
 
   // check speed
@@ -942,6 +948,8 @@ function cw_checkDeath() {
   if(result < deathSpeed*maxVelocityFIFO) {
     return true;
   } else {
+    
+
     return false;
   }
 }
