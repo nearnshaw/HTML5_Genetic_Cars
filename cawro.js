@@ -1116,11 +1116,22 @@ function leap_simulationStep()
 
       if(leapvars[0].leapZ < 0.5)
       { 
+
+        //ctx.strokeStyle='red';
+        //ctx.moveTo(canvas.width/2,canvas.height/2);
+        //ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
+        //ctx.stroke();
+
         ctx.beginPath();
         ctx.fillStyle='red';
         ctx.arc(leapvars[0].leapX,leapvars[0].leapY,12,0,2*Math.PI);
         ctx.closePath();
         ctx.fill();
+
+        //resset
+        //ctx.strokeStyle='black';
+
+
         //rec pos
         //first pos
         if(leaparray.length == 0)
@@ -1146,23 +1157,47 @@ function leap_simulationStep()
       }
       else  //leapZ > 0.5   i.e. FAR
       {
+
+
+        //ctx.strokeStyle='FFEDA9';
+        //ctx.moveTo(canvas.width/2,canvas.height/2);
+        //ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
+        //ctx.stroke();
+
         ctx.beginPath();
         ctx.fillStyle='FFEDA9';
         ctx.arc(leapvars[0].leapX,leapvars[0].leapY,30*Math.abs((1-leapvars[0].leapZ)),0,2*Math.PI);
         ctx.fill();
         ctx.closePath();
+
+        //reset
+        //ctx.strokeStyle='black';
         
       }
 
       //draw array so far
-      ctx.beginPath();
+      
       ctx.fillStyle='CC3300';
+      ctx.strokeStyle='CC3300';
+      for(var i = 0; i < leaparray.length; i++)
+      {
+        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        ctx.fill();
+
+      }
       for(var i = 0; i < leaparray.length; i++)
       {   
-        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2,canvas.height/2);
+        ctx.lineTo(leaparray[i].x,leaparray[i].y);
+        ctx.stroke();
+        ctx.closePath();
       }
-      ctx.fill();
-      ctx.closePath();
+      
+      //reset
+      ctx.strokeStyle='black';
+      
+
 
     } //single finger mode close
     else  //multiFingerOn
@@ -1174,6 +1209,7 @@ function leap_simulationStep()
 
       for (i=0; i<leapvars.length;i++)
       {
+
         ctx.beginPath();
         ctx.fillStyle='#FF3300';
         ctx.arc(leapvars[i].leapX,leapvars[i].leapY,30*Math.abs((1-leapvars[i].leapZ)),0,2*Math.PI);
@@ -1189,19 +1225,25 @@ function leap_simulationStep()
 
 
 
-      //draw array so far
-      ctx.beginPath();
-      ctx.fillStyle='CC3300';
+ctx.fillStyle='CC3300';
+      ctx.strokeStyle='CC3300';
+      for(var i = 0; i < leaparray.length; i++)
+      {
+        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        ctx.fill();
+
+      }
       for(var i = 0; i < leaparray.length; i++)
       {   
-        if(leaparray[i].y)
-        {
-        
-        ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
-        }
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2,canvas.height/2);
+        ctx.lineTo(leaparray[i].x,leaparray[i].y);
+        ctx.stroke();
+        ctx.closePath();
       }
-      ctx.fill();
-      ctx.closePath();
+      
+      //reset
+      ctx.strokeStyle='black';
 
 
 
@@ -1225,12 +1267,21 @@ function leap_simulationStep()
     //draw array
     ctx.beginPath();
     ctx.fillStyle='000066';
+    ctx.strokestyle='000066';
     for(var i = 0; i < leaparray.length; i++)
     {
       ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
     }
     ctx.fill();
     ctx.closePath();
+    for(var i = 0; i < leaparray.length; i++)
+      {   
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2,canvas.height/2);
+        ctx.lineTo(leaparray[i].x,leaparray[i].y);
+        ctx.stroke();
+        ctx.closePath();
+      }
 
 
 
@@ -1250,6 +1301,7 @@ function leap_simulationStep()
 
     if(leapvars[0].leapZ < 0.5)
     { 
+        
         ctx.beginPath();
         ctx.fillStyle='#00CCFF';
         ctx.arc(leapvars[0].leapX,leapvars[0].leapY,12,0,2*Math.PI);
@@ -1613,7 +1665,7 @@ function resetDots()
   addWheelMode = false;
 
    document.getElementById("adwh").classList.add("btn-primary");
-  document.getElementById("create").classList.remove("btn-primary");
+   document.getElementById("create").classList.remove("btn-primary");
 
 }
 
