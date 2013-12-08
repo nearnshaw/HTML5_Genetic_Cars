@@ -1067,7 +1067,7 @@ function toggleLeapMode()
 
     leap_turnon();
   
-    leap_drawInterval = setInterval(leap_drawScreen, Math.round(1000/screenfps));
+    //leap_drawInterval = setInterval(leap_drawScreen, Math.round(1000/screenfps));
     leap_runningInterval = setInterval(leap_simulationStep, Math.round(1000/box2dfps));
  
 }
@@ -1081,7 +1081,7 @@ function leap_drawScreen()
   ctx.fillStyle="#FFFFFF";
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
-  ctx.fillStyle="#FF3399";
+  ctx.fillStyle="#000000";
   ctx.beginPath();
   ctx.arc(400,200,5,0,2*Math.PI);
   ctx.moveTo(0,200);
@@ -1096,6 +1096,7 @@ function leap_drawScreen()
 
 function leap_simulationStep()
 {
+  leap_drawScreen();
 
   var c=document.getElementById("mainbox");
   var ctx=c.getContext("2d");
@@ -1113,14 +1114,14 @@ function leap_simulationStep()
     ctx.textBaseline = 'bottom';
     ctx.fillText('Push one finger forward to add vertexes', 10, 390);
 
-
+    //close
       if(leapvars[0].leapZ < 0.5)
       { 
 
-        //ctx.strokeStyle='red';
-        //ctx.moveTo(canvas.width/2,canvas.height/2);
-        //ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
-        //ctx.stroke();
+        ctx.strokeStyle='red';
+        ctx.moveTo(canvas.width/2,canvas.height/2);
+        ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
+        ctx.stroke();
 
         ctx.beginPath();
         ctx.fillStyle='red';
@@ -1128,7 +1129,7 @@ function leap_simulationStep()
         ctx.closePath();
         ctx.fill();
 
-        //resset
+        //reset
         //ctx.strokeStyle='black';
 
 
@@ -1159,16 +1160,17 @@ function leap_simulationStep()
       {
 
 
-        //ctx.strokeStyle='FFEDA9';
-        //ctx.moveTo(canvas.width/2,canvas.height/2);
-        //ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
-        //ctx.stroke();
+        ctx.strokeStyle='FFEDA9';
+        ctx.moveTo(canvas.width/2,canvas.height/2);
+        ctx.lineTo(leapvars[0].leapX,leapvars[0].leapY);
+        ctx.stroke();
 
-        ctx.beginPath();
         ctx.fillStyle='FFEDA9';
+        ctx.beginPath();
         ctx.arc(leapvars[0].leapX,leapvars[0].leapY,30*Math.abs((1-leapvars[0].leapZ)),0,2*Math.PI);
-        ctx.fill();
         ctx.closePath();
+        ctx.fill();
+        
 
         //reset
         //ctx.strokeStyle='black';
@@ -1181,7 +1183,9 @@ function leap_simulationStep()
       ctx.strokeStyle='CC3300';
       for(var i = 0; i < leaparray.length; i++)
       {
+        ctx.beginPath();
         ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        ctx.closePath();
         ctx.fill();
 
       }
@@ -1195,7 +1199,7 @@ function leap_simulationStep()
       }
       
       //reset
-      ctx.strokeStyle='black';
+      //ctx.strokeStyle='black';
       
 
 
@@ -1210,11 +1214,13 @@ function leap_simulationStep()
       for (i=0; i<leapvars.length;i++)
       {
 
-        ctx.beginPath();
+        //ctx.beginPath();
         ctx.fillStyle='#FF3300';
+        ctx.beginPath();
         ctx.arc(leapvars[i].leapX,leapvars[i].leapY,30*Math.abs((1-leapvars[i].leapZ)),0,2*Math.PI);
-        ctx.fill();
         ctx.closePath();
+        ctx.fill();
+        //ctx.closePath();
       }
 
       //instructions
@@ -1225,11 +1231,13 @@ function leap_simulationStep()
 
 
 
-ctx.fillStyle='CC3300';
+      ctx.fillStyle='CC3300';
       ctx.strokeStyle='CC3300';
       for(var i = 0; i < leaparray.length; i++)
       {
+        ctx.beginPath();
         ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
+        ctx.closePath();
         ctx.fill();
 
       }
@@ -1268,8 +1276,10 @@ ctx.fillStyle='CC3300';
     ctx.beginPath();
     ctx.fillStyle='000066';
     ctx.strokestyle='000066';
+
     for(var i = 0; i < leaparray.length; i++)
     {
+      //ctx.moveTo(leaparray[i].x,leaparray[i].y);
       ctx.arc(leaparray[i].x,leaparray[i].y,7,0,2*Math.PI);
     }
     ctx.fill();
@@ -1604,7 +1614,7 @@ function leap_turnon()
 function leap_end()
 {
   
-   clearInterval(leap_drawInterval);
+   //clearInterval(leap_drawInterval);
    clearInterval(leap_runningInterval);
    cw_paused = false;
    multiFingerOn == false;
